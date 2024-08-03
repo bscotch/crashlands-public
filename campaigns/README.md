@@ -256,3 +256,11 @@ Encoding is listed as `name (type)` followed by a description. For repeating con
       - if `type` is `16`
         - `item` (`u16`)
         - `quantity` (`u8`)
+
+## Sample Parser
+
+If you have [Node.js 20+](https://nodejs.org/en) you can run the [sample parser](./crashlands-campaign-to-json.mjs) on a Crashlands Campaign file to get its contents in (relatively) human readable JSON format. You can use that parser as a starting point for your own exploration of the format!
+
+To run it, you'll need to feed it the location of a campaign file and an output location for the created JSON file. Assuming you have a terminal open in the directory containing the script, the command would look something like this:
+
+`node crashlands-campaign-to-json.mjs path/to/campain_hardfile path/to/output.json`
