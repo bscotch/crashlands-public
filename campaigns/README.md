@@ -1,6 +1,6 @@
-# Campaign File: Public Documentation
+# Crashlands Campaign File: Public Documentation
 
-The Crashlands "campaign file" is a bespoke binary file describing the campaign world. A lot of that content is really only useful for developers and the game itself, but there are parts of it that may be useful for wikis, community mods (not officially supported!), and general interest.
+The [Crashlands](https://www.bscotch.net/games/crashlands) "campaign file" is a bespoke binary file describing the campaign world. A lot of that content is really only useful for developers and the game itself, but there are parts of it that may be useful for wikis, community mods (not officially supported!), and general interest.
 
 This document provides some (incomplete) guidance on how to read the Crashlands campaign file.
 
@@ -14,6 +14,7 @@ This document provides some (incomplete) guidance on how to read the Crashlands 
 - **String:** A sequence of bytes that can be interpreted as text is a "string". All strings in the campaign file end with a "null" byte (`00000000`), so strings can be read by grabbing each byte until you hit a null byte.
 - **Integer:** A sequence of bytes of some known length, interpreted as an integer value. For example, an 8-bit (1 byte) integer, 16-bit (2 byte) integer, and so on.
 - **Signed/Unsigned Integer:** An integer can either allow negatives ("signed") or only positives ("unsigned"). These are typically named like `s8` (8-bit signed integer) or `u32` (32-bit unsigned integer)
+- **Outpost:** In Crashlands the base world is randomly generated. "Outposts" are non-random, designed locations scattered around the world. These are how characters/villages/bossfights/etc are placed. Outposts also change over time, triggered by quests. These changes are represented by "stages", each of which is a delta from the prior stage.
 
 ## Campaign File Location
 
@@ -92,3 +93,68 @@ Encoding is listed as `name (type)` followed by a description. For repeating con
         - `character_idx` (`u32`): Which character speaks the dialogue
         - `dialogue` (`string`): The dialogue line
 19. `whatbyte` (`u8`): `102`
+20. `OUTPOST_COUNT` (`u16`): Total outpost definitions that follow
+    - `idx` (`u32`): Numeric identifier for the outpost
+    - `name` (`string`)
+    - `biome` (`u8`)
+    - `position1` (`s16`) // cartesian x (tiles), radial r (seconds)
+    - `position2` (`s16`) // cartesian y (tiles), radial theta (degrees)
+    - `variation1` (`s16`) // cartesian x_max (tiles), radial r_max (seconds)
+    - `variation2` (`s16`) // cartesian y_max (tiles), radial plus/minus_theta (degrees)
+    - `info_flag` (`u16`)
+    - `relative_to` (`u32`)
+    - `whatbyte` (`u8`): `112`
+    - `stage_count` (`u8`): Total number of stages in this outpost
+      - `idx` (`u16`)
+      - `name` (`string`)
+      - `whatbyte` (`u8`): `122`
+      - `tile_count` (`u16`): Total number of tiles described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `tile` (`s16`): Which tile is at this location
+      - `whatbyte` (`u8`): `132`
+      - `item_count` (`u16`): Total number of items described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `item` (`s16`): Which item is at this location
+      - `whatbyte` (`u8`): `142`
+      - `creature_count` (`u16`): Total number of creatures described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `creature` (`s8`): Which creature is at this location
+        - `size` (`u8`): The creature's size
+      - `whatbyte` (`u8`): `152`
+      - `npc_count` (`u16`): Total number of NPCs described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `npc` (`u32`): Which NPC is at this location
+      - `whatbyte` (`u8`): `162`
+      - `bossfight_count` (`u16`): Total number of Bossfights described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `bossfight` (`u32`): Which Bossfight is at this location
+      - `whatbyte` (`u8`): `172`
+      - `chest_count` (`u16`): Total number of Chests described after
+        - `x_coord` (`s8`)
+        - `y_coord` (`s8`)
+        - `chest` (`s16`): Which Chest is at this location
+        - `whatbyte` (`u8`): `182`
+        - `loot_group_count` (`u8`)
+          - `quantity` (`u8`)
+          - `probability` (`u8`/200)
+          - `whatbyte` (`u8`): `192`
+          - `loot_count` (`u8`)
+            - `item` (`u16`) // index
+            - `item_metadata` (`u8`) // boolean
+            - `weight` (`u8`) // arbitrary integer from 0-255
+21. `whatbyte` (`u8`): `106`
+22. `STORY_COUNT` (`u16`): Total number of story definitions that follow
+    - `idx` (`u32`): Story ID, referenced in quests
+    - `name` (`string`): Story name as shown in game
+    - `rank` (`u16`): _(unused)_
+    - `priority` (`u8`): Whether this takes priority over other stories
+23. `whatbyte` (`u8`): `105`
+24. `QUEST_COUNT` (`u16`): Total number of quest definitions that follow
+    - `idx` (`u32`): Quest ID, referenced in other quests
+    - ...
+25.

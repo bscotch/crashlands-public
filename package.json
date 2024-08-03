@@ -1,14 +1,11 @@
 {
-  "name": "crashlands-campaign",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@local/crashlands-public",
+  "version": "0.1.0",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test:campaign-parser": "node campaigns/crashlands-campaign-to-json.mjs samples/campaign_hardfile samples/campaign.json"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.1.0"
   }
