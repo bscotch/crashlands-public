@@ -201,12 +201,239 @@ const campaign = {
     }),
     105
   ),
-  quests: [],
+  quests: forCount(readU16(), () => {
+    return {
+      // - `idx` (`u32`): Quest ID, referenced in other quests
+      // - `name` (`string`): quest name
+      // - `giver` (`u32`): quest giver NPC id (0 = noone, 1=JB)
+      // - `receiver` (`u32`): quest receiver NPC id (0 = noone, 1=JB)
+      // - `flags` (`u32`)
+      // - `story` (`u32`): story id
+      // - `whatbyte` (`u8`): `115`
+      // - `initial_dialog_count` (`u8`)
+      //   - `speaker` (`u32`): NPC id
+      //   - `dialogue` (`string`)
+      // - `whatbyte` (`u8`): `116`
+      // - `incompletion_dialog_count` (`u8`)
+      //   - `speaker` (`u32`): NPC id
+      //   - `dialogue` (`string`)
+      // - `whatbyte` (`u8`): `117`
+      // - `completion_dialog_count` (`u8`)
+      //   - `speaker` (`u32`): NPC id
+      //   - `dialogue` (`string`)
+      // - `whatbyte` (`u8`): `118`
+      // - `required_perk_count` (`u8`): Required Perks
+      //   - `perk_id` (`u16`)
+      // - `whatbyte` (`u8`): `119`
+      // - `required_quest_count` (`u8`)
+      //   - `quest` (`u32`)
+      //   - `completion` (`u8`): 0→can just be active, 1→must be complete
+      idx: readU32(),
+      name: readString(),
+      giver: readU32(),
+      receiver: readU32(),
+      flags: readU32(),
+      story: assertNextWhatbyteAfter(readU32(), 115),
+      dialogue: {
+        initial: assertNextWhatbyteAfter(
+          forCount(readU8(), () => {
+            return {
+              speaker: readU32(),
+              dialogue: readString(),
+            };
+          }),
+          116
+        ),
+        incompletion: assertNextWhatbyteAfter(
+          forCount(readU8(), () => {
+            return {
+              speaker: readU32(),
+              dialogue: readString(),
+            };
+          }),
+          117
+        ),
+        completion: assertNextWhatbyteAfter(
+          forCount(readU8(), () => {
+            return {
+              speaker: readU32(),
+              dialogue: readString(),
+            };
+          }),
+          118
+        ),
+      },
+      requires: {
+        perks: assertNextWhatbyteAfter(
+          forCount(readU8(), () => {
+            return readU16();
+          }),
+          119
+        ),
+        quests: assertNextWhatbyteAfter(
+          forCount(readU8(), () => {
+            return {
+              quest: readU32(),
+              completion: readU8(),
+            };
+          }),
+          120
+        ),
+      },
+      rewards: {
+        accept: assertNextWhatbyteAfter(readQuestRewards(), 121),
+        complete: assertNextWhatbyteAfter(readQuestRewards(), 122),
+      },
+      transitions: {
+        accept: assertNextWhatbyteAfter(readQuestTransitions(), 123),
+        complete: assertNextWhatbyteAfter(readQuestTransitions(), 126),
+      },
+      hewgo_destroys: {
+        accept: assertNextWhatbyteAfter(readQuestHewgoDestruction(), 127),
+        complete: assertNextWhatbyteAfter(readQuestHewgoDestruction(), 125),
+      },
+      tasks: forCount(readU8(), () => {
+        const type = readU8();
+        if (type === 0) {
+          return {
+            type,
+            creature: readU8(),
+            size: readU8(),
+            outpost: readU32(),
+            quantity: readU8(),
+          };
+        } else if (type === 1) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+          };
+        } else if (type === 2) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+            outpost: readU32(),
+          };
+        } else if (type === 3) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+            outpost: readU32(),
+          };
+        } else if (type === 5) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+            outpost: readU32(),
+          };
+        } else if (type === 6) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+          };
+        } else if (type === 7) {
+          return {
+            type,
+            resource_item: readU16(),
+            loot_prob: readU8() / 200,
+            outpost: readU32(),
+            loot_item: readU16(),
+            quantity: readU8(),
+          };
+        } else if (type === 8) {
+          return {
+            type,
+            creature: readU8(),
+            size: readU8(),
+            outpost: readU32(),
+            loot_prob: readU8() / 200,
+            loot_item: readU16(),
+            loot_qty: readU8(),
+          };
+        } else if (type === 9) {
+          return {
+            type,
+            creature: readU8(),
+            size: readU8(),
+          };
+        } else if (type === 10) {
+          return {
+            type,
+            creature: readU8(),
+            size: readU8(),
+            name: readString(),
+            prob: readU8() / 200,
+            outpost: readU32(),
+          };
+        } else if (type === 12) {
+          return {
+            type,
+            seconds: readU16(),
+          };
+        } else if (type === 13) {
+          return {
+            type,
+            outpost: readU32(),
+            stage: readS16(),
+            x: readS8(),
+            y: readS8(),
+          };
+        } else if (type === 14) {
+          return {
+            type,
+            bossfight: readU32(),
+          };
+        } else if (type === 15) {
+          return {
+            type,
+            nighttime: readU8() === 1,
+          };
+        } else if (type === 16) {
+          return {
+            type,
+            item: readU16(),
+            quantity: readU8(),
+          };
+        }
+      }),
+    };
+  }),
 };
 
 fs.writeFileSync(outputCampaignFilePath, JSON.stringify(campaign, null, "\t"));
 
 //#region UTILITIES
+function readQuestRewards() {
+  return forCount(readU8(), () => {
+    return {
+      type: readU8(),
+      reward: readU32(),
+      extra: readU8(),
+    };
+  });
+}
+function readQuestTransitions() {
+  return forCount(readU8(), () => {
+    return {
+      outpost: readU32(),
+      stage_id: readU16(),
+      transition_method: readU8(),
+    };
+  });
+}
+function readQuestHewgoDestruction() {
+  return forCount(readU8(), () => {
+    return {
+      item: readU16(),
+      outpost: readU32(),
+    };
+  });
+}
+
 function readU8() {
   return nextByte();
 }

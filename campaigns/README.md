@@ -156,5 +156,103 @@ Encoding is listed as `name (type)` followed by a description. For repeating con
 23. `whatbyte` (`u8`): `105`
 24. `QUEST_COUNT` (`u16`): Total number of quest definitions that follow
     - `idx` (`u32`): Quest ID, referenced in other quests
-    - ...
-25.
+    - `name` (`string`): quest name
+    - `giver` (`u32`): quest giver NPC id (0 = noone, 1=JB)
+    - `receiver` (`u32`): quest receiver NPC id (0 = noone, 1=JB)
+    - `flags` (`u32`)
+    - `story` (`u32`): story id
+    - `whatbyte` (`u8`): `115`
+    - `initial_dialog_count` (`u8`)
+      - `speaker` (`u32`): NPC id
+      - `dialogue` (`string`)
+    - `whatbyte` (`u8`): `116`
+    - `incompletion_dialog_count` (`u8`)
+      - `speaker` (`u32`): NPC id
+      - `dialogue` (`string`)
+    - `whatbyte` (`u8`): `117`
+    - `completion_dialog_count` (`u8`)
+      - `speaker` (`u32`): NPC id
+      - `dialogue` (`string`)
+    - `whatbyte` (`u8`): `118`
+    - `required_perk_count` (`u8`): Required Perks
+      - `perk_id` (`u16`)
+    - `whatbyte` (`u8`): `119`
+    - `required_quest_count` (`u8`)
+      - `quest` (`u32`)
+      - `completion` (`u8`): 0→can just be active, 1→must be complete
+    - (REWARDS: repeat for on-accept and on-complete events, with starting `whatbyte` of `120` and `121` respectively)
+      - `reward_count` (`u8`)
+        - `reward_type` (`u8`): 0→get an item; 1→Get a recipe; 2→track recipe; 3→Q kills NPC; 4→Outpost map visibility
+        - `reward` (`u32`): 0→item_idx; 1→item_idx; 2→item_idx; 3→npc_id; 4→outpost_id; 6→Weapon/Armor
+        - `reward_extra` (`u8`): 0→quantity; 1→NA; 2→NA; 3→NA; 4→[0=invisible,1=visible]; 6→Weapon/Armor Quality
+    - (TRANSITIONS: repeat for on-accept and on-complete events, with starting `whatbyte` of `122` and `123` respectively)
+      - `transition_count` (`u8`)
+        - `outpost` (`u32`): outpost id
+        - `stage_id` (`u16`): stage id
+        - `transition_method` (`u8`)
+    - (HEWGO DESTROYS THING: repeat for on-accept and on-complete events, with starting `whatbyte` of `126` and `127` respectively)
+      - `destroy_count` (`u8`)
+        - `item_idx` (`u16`)
+        - `in_outpost` (`u32`)
+    - `whatbyte` (`u8`): `125`
+    - `task_count` (`u8`): Number of task definitions that follow
+      - `type` (`u8`): This task's type, which dictates how the next bytes are read
+      - if `type` is `0`
+        - `creature` (`u8`)
+        - `creature_size` (`u8`)
+        - `in_outpost` (`u32`)
+        - `quantity` (`u8`)
+      - if `type` is `1`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
+      - if `type` is `2`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
+        - `in_outpost` (`u32`)
+      - if `type` is `3`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
+        - `in_outpost` (`u32`)
+      - if `type` is `5`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
+        - `in_outpost` (`u32`)
+      - if `type` is `6`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
+      - if `type` is `7`
+        - `resource_item` (`u16`)
+        - `loot_prob` (`u8`) // divided by 200
+        - `in_outpost` (`u32`)
+        - `loot_item` (`u16`)
+        - `loot_qty` (`u8`)
+      - if `type` is `8`
+        - `creature` (`u8`)
+        - `creature_size` (`u8`)
+        - `in_outpost` (`u32`)
+        - `loot_prob` (`u8`) // divided by 200
+        - `loot_item` (`u16`)
+        - `loot_qty` (`u8`)
+      - if `type` is `9`
+        - `creature` (`u8`)
+        - `creature_size` (`u8`)
+      - if `type` is `10`
+        - `creature` (`u8`)
+        - `creature_size` (`u8`)
+        - `name` (`string`)
+        - `prob` (`u8`) // divided by 200
+        - `in_outpost` (`u32`)
+      - if `type` is `12`
+        - `seconds` (`u16`)
+      - if `type` is `13`
+        - `in_outpost` (`u32`)
+        - `stage_id` (`s16`) // -1 means "any stage"
+        - `outpost_x` (`s8`) // (0,0) means "any coord"
+        - `outpost_y` (`s8`) // negated value
+      - if `type` is `14`
+        - `bossfight` (`u32`)
+      - if `type` is `15`
+        - `nighttime` (`u8`) // boolean
+      - if `type` is `16`
+        - `item` (`u16`)
+        - `quantity` (`u8`)
