@@ -190,6 +190,18 @@ const campaign = {
     }),
     106
   ),
+  stories: assertNextWhatbyteAfter(
+    forCount(readU16(), () => {
+      return {
+        idx: readU32(),
+        name: readString(),
+        rank: readU16(),
+        priority: readU8(),
+      };
+    }),
+    105
+  ),
+  quests: [],
 };
 
 fs.writeFileSync(outputCampaignFilePath, JSON.stringify(campaign, null, "\t"));
