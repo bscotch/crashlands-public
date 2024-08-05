@@ -22,6 +22,20 @@ When you install Crashlands you end up with a bunch of files in the installation
 
 If you open this file up in a plain text editor (like Notepad or VS Code) you'll see a lot of plaintext content, plus a lot of indecipherable stuff. You'll need a binary or hex editor to make sense of the rest, but it won't be easy! If you understand the encoding, you can also write a program to read the binary file and convert it into something that you _can_ read.
 
+## Campaign Game Content
+
+_See the [license](../LICENSE.md) for what you're allowed to do with the game content provided in this repo!_
+
+Campaign files describe how game content relates to other game content, and defines some kinds of assets completely (e.g. NPCs), but does not provide full definitions for all assets. For example, campaign files may refer to the unique IDs of various items that get dropped by a boss fight, or upon completion of a quest, but do not have information about what those items actually _are_.
+
+We've provided [an index](./content/index.json) describing most of that content, along with [thumbnail images of game assets](./content/), which can be used in combination with campaign file data to match unique identifiers to images, names, descriptions, and other details.
+
+The index file includes:
+
+- Numeric identifier (`idx`) values for creatures, items, etc.
+- Listing of which images are associated with any given asset.
+- Names and descriptions of each asset.
+
 ## Campaign File Encoding
 
 The following is a rough description of the campaign file's content. It may not be exactly correct, so please report any errors you find!
