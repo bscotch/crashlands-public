@@ -4,6 +4,28 @@ The [Crashlands](https://www.bscotch.net/games/crashlands) "campaign file" is a 
 
 This document provides some (incomplete) guidance on how to read the Crashlands campaign file.
 
+## Campaign Game Content
+
+_See the [license](../LICENSE.md) for what you're allowed to do with the game content provided in this repo!_
+
+Campaign files describe how game content relates to other game content, and defines some kinds of assets completely (e.g. NPCs), but does not provide full definitions for all assets. For example, campaign files may refer to the unique IDs of various items that get dropped by a boss fight, or upon completion of a quest, but do not have information about what those items actually _are_.
+
+We've provided [an index](./content/index.json) describing most of that content, along with [thumbnail images of game assets](./content/), which can be used in combination with campaign file data to match unique identifiers to images, names, descriptions, and other details.
+
+The index file includes:
+
+- Numeric identifier (`idx`) values for creatures, items, etc.
+- Listing of which images are associated with any given asset.
+- Names and descriptions of each asset.
+
+## Sample Parser
+
+If you have [Node.js 20+](https://nodejs.org/en) you can run the [sample parser](./crashlands-campaign-to-json.mjs) on a Crashlands Campaign file to get its contents in (relatively) human readable JSON format. You can use that parser as a starting point for your own exploration of the format!
+
+To run it, you'll need to feed it the location of a campaign file and an output location for the created JSON file. Assuming you have a terminal open in the directory containing the script, the command would look something like this:
+
+`node crashlands-campaign-to-json.mjs path/to/campain_hardfile path/to/output.json`
+
 ## Definitions
 
 - **Campaign File:** A file shipped with the game describing all characters, quests, outpost locations, etc. Basically the file that describes the game world.
@@ -21,20 +43,6 @@ This document provides some (incomplete) guidance on how to read the Crashlands 
 When you install Crashlands you end up with a bunch of files in the installation folder (with a Steam install on Windows that'd be something like `C:\program files (x86)\Steam\steamapps\common\Crashlands`). Inside that folder you'll see a collection of files named exactly, or starting with, `campaign_hardfile`. You'll see one for each kind of campaign. The one without a prefix is the main one used for regular gameplay.
 
 If you open this file up in a plain text editor (like Notepad or VS Code) you'll see a lot of plaintext content, plus a lot of indecipherable stuff. You'll need a binary or hex editor to make sense of the rest, but it won't be easy! If you understand the encoding, you can also write a program to read the binary file and convert it into something that you _can_ read.
-
-## Campaign Game Content
-
-_See the [license](../LICENSE.md) for what you're allowed to do with the game content provided in this repo!_
-
-Campaign files describe how game content relates to other game content, and defines some kinds of assets completely (e.g. NPCs), but does not provide full definitions for all assets. For example, campaign files may refer to the unique IDs of various items that get dropped by a boss fight, or upon completion of a quest, but do not have information about what those items actually _are_.
-
-We've provided [an index](./content/index.json) describing most of that content, along with [thumbnail images of game assets](./content/), which can be used in combination with campaign file data to match unique identifiers to images, names, descriptions, and other details.
-
-The index file includes:
-
-- Numeric identifier (`idx`) values for creatures, items, etc.
-- Listing of which images are associated with any given asset.
-- Names and descriptions of each asset.
 
 ## Campaign File Encoding
 
@@ -271,10 +279,3 @@ Encoding is listed as `name (type)` followed by a description. For repeating con
         - `item` (`u16`)
         - `quantity` (`u8`)
 
-## Sample Parser
-
-If you have [Node.js 20+](https://nodejs.org/en) you can run the [sample parser](./crashlands-campaign-to-json.mjs) on a Crashlands Campaign file to get its contents in (relatively) human readable JSON format. You can use that parser as a starting point for your own exploration of the format!
-
-To run it, you'll need to feed it the location of a campaign file and an output location for the created JSON file. Assuming you have a terminal open in the directory containing the script, the command would look something like this:
-
-`node crashlands-campaign-to-json.mjs path/to/campain_hardfile path/to/output.json`
